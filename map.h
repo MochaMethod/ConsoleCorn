@@ -27,11 +27,11 @@ class Map {
          * Takes in an [Entity] to derive its visual sprite for placement in the map
          * and its name for key value storage in [m_positions]
         */
-        void modifySpace(std::size_t p_col, std::size_t p_row) {
+        void modifySpace(std::pair<std::size_t, std::size_t> p_position) {
             std::size_t entityColPos = getPostion().first;
             std::size_t entityRowPos = getPostion().second;
-            std::size_t newColPos = entityColPos + p_col;
-            std::size_t newRowPos = entityRowPos + p_row; 
+            std::size_t newColPos = entityColPos + p_position.first;
+            std::size_t newRowPos = entityRowPos + p_position.second; 
 
             // TODO: Modify method to take in replacement sprite.
             m_space[entityColPos][entityRowPos] = collection.m_grass.getSprite();
@@ -44,12 +44,17 @@ class Map {
          * Iterates through the 2D [m_space] vector and prints it to the screen.
         */
         void printSpace() {
+            // TODO: Handle color codes.
             for (decltype(m_space)::size_type col = 0; col < m_space.size(); col++) {
                 for (decltype(m_space)::size_type row = 0; row < m_space[col].size(); row++) {
-                    std::cout << "\x1B[32m" << m_space[col][row]; 
+                    std::cout << m_space[col][row]; 
                 }
                 std::cout << "\n";
             } 
+        }
+
+        void handleBorderCollision(std::pair<std::size_t, std::size_t> p_position) {
+
         }
 
         // Getters:

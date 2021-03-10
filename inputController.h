@@ -19,18 +19,19 @@ class InputController {
 
             char c;
             while (read(STDIN_FILENO, &c, 1) == 1) {
+                std::pair<std::size_t, std::size_t> newPosition;
                 switch(c) {
                     case 'w' :
-                        p_space->modifySpace(-1, 0);
+                        newPosition = { -1, 0 };
                         break;
                     case 's' :
-                        p_space->modifySpace(1, 0);
+                        newPosition = { 1, 0 };
                         break;
                     case 'a' :
-                        p_space->modifySpace(0, -1);
+                        newPosition = { 0, -1 };
                         break;
                     case 'd' :
-                        p_space->modifySpace(0, 1);
+                        newPosition = { 0, 1 };
                         break;
                     case 'e' :
                         disableRawMode();
@@ -43,8 +44,8 @@ class InputController {
                     default:
                         std::cout << "Invalid movement." << std::endl;
                 }
-
-                disableRawMode();
+                
+                p_space->modifySpace(newPosition);
                 break;
             }
     }

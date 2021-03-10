@@ -2,9 +2,8 @@
 #include "entity.h"
 #include "inputController.h"
 
-// TODO: Create different entities && entity collection
-// TODO: Create a player inventory.
 // TODO: Border and entity collision.
+// TODO: Create a player inventory.
 // TODO: What are smart pointers?
 
 int main() {
@@ -35,5 +34,5 @@ int main() {
         inputController.movement(&map, player);
     }
 
-    return 0;
+    return 1;
 }
