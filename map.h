@@ -16,10 +16,19 @@ class Map {
         EntityCollection collection = EntityCollection();
 
         // Utilities:
-        void generateSpace(std::size_t p_col, std::size_t p_row) {
-            std::vector<std::vector<char>> l_space(p_col, std::vector<char>(p_row, collection.m_grass.getSprite()));
-
+        void generateSpace(std::pair<std::size_t, std::size_t> p_spaceBounds) {
+            std::vector<std::vector<char>> l_space(p_spaceBounds.first, std::vector<char>(p_spaceBounds.second, collection.m_grass.getSprite()));
+            
+            setSpaceBounds(p_spaceBounds);
             setSpace(l_space);
+        }
+
+        std::pair<std::size_t, std::size_t> getUpdatedPosition(std::pair<std::size_t, std::size_t> p_position) {
+            std::size_t entityColPos = getPostion().first;
+            std::size_t entityRowPos = getPostion().second;
+            std::size_t newColPos = entityColPos + p_position.first;
+            std::size_t newRowPos = entityRowPos + p_position.second;
+            return std::pair<std::size_t, std::size_t> { newColPos, newRowPos };
         }
 
         /**
@@ -27,17 +36,14 @@ class Map {
          * Takes in an [Entity] to derive its visual sprite for placement in the map
          * and its name for key value storage in [m_positions]
         */
-        void modifySpace(std::pair<std::size_t, std::size_t> p_position) {
-            std::size_t entityColPos = getPostion().first;
-            std::size_t entityRowPos = getPostion().second;
-            std::size_t newColPos = entityColPos + p_position.first;
-            std::size_t newRowPos = entityRowPos + p_position.second; 
-
+        void modifySpace(std::pair<std::size_t, std::size_t> p_newPosition) {
             // TODO: Modify method to take in replacement sprite.
-            m_space[entityColPos][entityRowPos] = collection.m_grass.getSprite();
 
-            m_space[newColPos][newRowPos] = m_operatingEntity.getSprite();
-            m_positions[m_operatingEntity.getName()] = std::pair<std::size_t, std::size_t> { newColPos, newRowPos };
+            // Get old position and set it to another sprite. Then update the position with the new position.
+            m_space[getPostion().first][getPostion().second] = collection.m_grass.getSprite();
+            m_positions[m_operatingEntity.getName()] = p_newPosition;
+            
+            m_space[p_newPosition.first][p_newPosition.second] = m_operatingEntity.getSprite();
         }
 
         /**
@@ -53,8 +59,16 @@ class Map {
             } 
         }
 
-        void handleBorderCollision(std::pair<std::size_t, std::size_t> p_position) {
+        bool willCollideWithBorder(std::pair<std::size_t, std::size_t> p_position) {
+            if (p_position.first == m_spaceBounds.first - 1 || p_position.first == 0) {
+                return true;
+            } 
+            
+            if (p_position.second == m_spaceBounds.second - 1 || p_position.second == 0) {
+                return true;
+            }
 
+            return false;
         }
 
         // Getters:
@@ -64,11 +78,13 @@ class Map {
         // Setters:
         void setSpace(std::vector<std::vector<char>> p_space) { m_space = p_space; }
         void setOperatingEntity(Entity p_entity) { m_operatingEntity = p_entity; }
+        void setSpaceBounds(std::pair<std::size_t, std::size_t> p_spaceBounds) { m_spaceBounds = p_spaceBounds; }
 
     private:
         Entity m_operatingEntity;
         std::vector<std::vector<char>> m_space;
         std::unordered_map<std::string, std::pair<std::size_t, std::size_t>> m_positions;
+        std::pair<std::size_t, std::size_t> m_spaceBounds;
 };
 
 #endif

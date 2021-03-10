@@ -8,21 +8,13 @@
 
 int main() {
     Entity player = Entity("player", 'p');
-    /*
-    std::vector<std::vector<char>> space = {
-        {'.', '.', '.', '.', '.'},
-        {'.', '.', '.', '.', '.'},
-        {'.', '.', '.', '.', '.'},
-        {'.', '.', '.', '.', '.'},
-        {'.', '.', '.', '.', '.'},
-    };
-    */
+    std::pair<std::size_t, std::size_t> beginningPlayerPosition = { 1, 1 };
 
     Map map = Map();
     //map.setSpace(space);
     map.generateSpace(20, 50);
     map.setOperatingEntity(player);
-    map.modifySpace(1, 1);
+    map.modifySpace(beginningPlayerPosition);
 
     InputController inputController = InputController(); 
 
