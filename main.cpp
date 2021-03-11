@@ -9,10 +9,11 @@
 int main() {
     Entity player = Entity("player", 'p');
     std::pair<std::size_t, std::size_t> beginningPlayerPosition = { 1, 1 };
+    std::pair<std::size_t, std::size_t> spaceBounds = { 20, 50 };
 
     Map map = Map();
     //map.setSpace(space);
-    map.generateSpace(20, 50);
+    map.generateSpace(spaceBounds);
     map.setOperatingEntity(player);
     map.modifySpace(beginningPlayerPosition);
 

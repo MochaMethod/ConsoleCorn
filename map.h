@@ -60,11 +60,19 @@ class Map {
         }
 
         bool willCollideWithBorder(std::pair<std::size_t, std::size_t> p_position) {
-            if (p_position.first == m_spaceBounds.first - 1 || p_position.first == 0) {
+            std::size_t colUpperBounds = m_spaceBounds.first;
+            std::size_t rowUpperBounds = m_spaceBounds.second;
+            std::size_t lowerBounds = -1;
+            bool isColUpperBounds = p_position.first == colUpperBounds;
+            bool isRowUpperBounds = p_position.second == rowUpperBounds;
+            bool isColLowerBounds = p_position.first == lowerBounds;
+            bool isRowLowerBounds = p_position.second == lowerBounds;
+
+            if (isColUpperBounds || isColLowerBounds) {
                 return true;
             } 
             
-            if (p_position.second == m_spaceBounds.second - 1 || p_position.second == 0) {
+            if (isRowUpperBounds || isRowLowerBounds) {
                 return true;
             }
 

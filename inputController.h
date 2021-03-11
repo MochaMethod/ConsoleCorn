@@ -25,22 +25,22 @@ class InputController {
                     case 'w' :
                         positionModifiers = { -1, 0 };
                         newPosition = p_space->getUpdatedPosition(positionModifiers);
-                        if (!p_space->willCollideWithBorder()) p_space->modifySpace(newPosition);
+                        if (!p_space->willCollideWithBorder(newPosition)) p_space->modifySpace(newPosition);
                         break;
                     case 's' :
                         positionModifiers = { 1, 0 };
                         newPosition = p_space->getUpdatedPosition(positionModifiers);
-                        p_space->modifySpace(newPosition);
+                        if (!p_space->willCollideWithBorder(newPosition)) p_space->modifySpace(newPosition);
                         break;
                     case 'a' :
                         positionModifiers = { 0, -1 };
                         newPosition = p_space->getUpdatedPosition(positionModifiers);
-                        p_space->modifySpace(newPosition);
+                        if (!p_space->willCollideWithBorder(newPosition)) p_space->modifySpace(newPosition);
                         break;
                     case 'd' :
                         positionModifiers = { 0, 1 };
                         newPosition = p_space->getUpdatedPosition(positionModifiers);
-                        p_space->modifySpace(newPosition);
+                        if (!p_space->willCollideWithBorder(newPosition)) p_space->modifySpace(newPosition);
                         break;
                     case 'e' :
                         disableRawMode();
