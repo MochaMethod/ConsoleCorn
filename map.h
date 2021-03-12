@@ -32,7 +32,7 @@ class Map {
                 cornPosition.second += moveRowAmount;
                 space[cornPosition.first][cornPosition.second] = collection.m_corn.getSprite();
             }
-            
+
             setSpaceBounds(p_spaceBounds);
             setSpace(space);
         }
@@ -93,12 +93,6 @@ class Map {
             }
 
             return false;
-        }
-
-        void handleInteraction() {
-            if (m_standingOnEntitySprite == '!') {
-                std::cout << "Corn!" << std::endl;
-            } 
         }
 
         // Getters:

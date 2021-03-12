@@ -2,10 +2,12 @@
 #define INPUTCONTROLLER_H
 
 #include "entity.h"
+#include "player.h"
 #include "map.h"
 #include "rawmode.h"
 #include "inputOptions.h"
 #include "uiController.h"
+#include "entityCollection.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -22,6 +24,7 @@ class InputController {
         // Members:
         InputOptions options = InputOptions();
         UIController uiController = UIController();
+        EntityCollection entityCollection = EntityCollection();
 
         // Utilities:
         void movement() {
@@ -65,6 +68,7 @@ class InputController {
     }
 
     // TODO: Confirm user selection.
+    // TODO: Find out why map spazzes out.
     std::string handleEntries(std::vector<std::string> p_acceptableInput) {
         uiController.println("Choices: ");
         for (std::string i : p_acceptableInput) {
@@ -76,7 +80,6 @@ class InputController {
         std::string acceptedInput;
 
         for (;;) {
-            
             std::cin >> rawInput;
 
             std::vector<std::string> inputVector;
@@ -99,8 +102,12 @@ class InputController {
                 }
             }
         }
-        
-        // TODO: Handle verification of acceptedInput;
+
+        uiController.print("You chose: ");
+        uiController.println(acceptedInput);
+
+        sleep(1);
+
         return acceptedInput;
     }
 
@@ -111,7 +118,12 @@ class InputController {
         std::string input = handleEntries(acceptableInput);
 
         if (input == options.m_interact) {
-            m_space->handleInteraction();
+            std::vector<std::string> acceptableInput = { options.m_grab };
+            handleEntries(acceptableInput);
+        } else if (input == options.m_grab) {
+            if (m_space->getStandingOnEntitySprite() == entityCollection.m_corn.getSprite()) {
+                entityCollection.m_player.inventory[entityCollection.m_corn.getName()] = entityCollection.m_corn;
+            }
         }
     }
 

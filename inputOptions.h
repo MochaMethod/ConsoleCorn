@@ -6,6 +6,7 @@
 class InputOptions {
     public:
         std::string m_interact = "interact";
+        std::string m_grab = "grab";
 };
 
 #endif
