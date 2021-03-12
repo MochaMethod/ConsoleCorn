@@ -5,8 +5,8 @@
 
 class EntityCollection {
     public:
-        Entity m_grass = Entity("grass", ',');
-
+        Entity m_grass = Entity("grass", ',', false);
+        Entity m_corn = Entity("corn", '!', true);
 };
 
 #endif

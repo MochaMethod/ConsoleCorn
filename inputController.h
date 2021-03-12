@@ -4,6 +4,8 @@
 #include "entity.h"
 #include "map.h"
 #include "rawmode.h"
+#include "inputOptions.h"
+#include "uiController.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -12,98 +14,110 @@
 
 class InputController {
     public:
-        void movement(Map* p_space, Entity p_entity) {
-            p_space->setOperatingEntity(p_entity);
+        InputController() {}
+        InputController(Map* p_space) {
+            m_space = p_space;
+        }
 
+        // Members:
+        InputOptions options = InputOptions();
+        UIController uiController = UIController();
+
+        // Utilities:
+        void movement() {
             enableRawMode();
 
             char c;
-            while (read(STDIN_FILENO, &c, 1) == 1) {
-                std::pair<std::size_t, std::size_t> positionModifiers;
-                std::pair<std::size_t, std::size_t> newPosition;
-                switch(c) {
-                    case 'w' :
-                        positionModifiers = { -1, 0 };
-                        newPosition = p_space->getUpdatedPosition(positionModifiers);
-                        if (!p_space->willCollideWithBorder(newPosition)) p_space->modifySpace(newPosition);
-                        break;
-                    case 's' :
-                        positionModifiers = { 1, 0 };
-                        newPosition = p_space->getUpdatedPosition(positionModifiers);
-                        if (!p_space->willCollideWithBorder(newPosition)) p_space->modifySpace(newPosition);
-                        break;
-                    case 'a' :
-                        positionModifiers = { 0, -1 };
-                        newPosition = p_space->getUpdatedPosition(positionModifiers);
-                        if (!p_space->willCollideWithBorder(newPosition)) p_space->modifySpace(newPosition);
-                        break;
-                    case 'd' :
-                        positionModifiers = { 0, 1 };
-                        newPosition = p_space->getUpdatedPosition(positionModifiers);
-                        if (!p_space->willCollideWithBorder(newPosition)) p_space->modifySpace(newPosition);
-                        break;
-                    case 'e' :
-                        disableRawMode();
-                        userInput();
-                        break;
-                    case 'q':
-                        disableRawMode();
-                        exit(1);
-                        break;
-                    default:
-                        std::cout << "Invalid movement." << std::endl;
-                }
-
-                disableRawMode();
-                break;
+            read(STDIN_FILENO, &c, 1);
+            switch(c) {
+                case 'w' :
+                    handleRawModeMovement(-1, 0);
+                    break;
+                case 's' :
+                    handleRawModeMovement(1, 0);
+                    break;
+                case 'a' :
+                    handleRawModeMovement(0, -1);
+                    break;
+                case 'd' :
+                    handleRawModeMovement(0, 1);
+                    break;
+                case 'e' :
+                    disableRawMode();
+                    userInput();
+                    break;
+                case 'q':
+                    disableRawMode();
+                    exit(1);
+                    break;
+                default:
+                    std::cout << "Invalid movement." << std::endl;
+                    break;
             }
+        
     }
 
+    void handleRawModeMovement(std::size_t p_colModifier, std::size_t p_rowModifier) {
+        std::pair<std::size_t, std::size_t> newPosition = m_space->getUpdatedPosition(std::pair<std::size_t, std::size_t> { p_colModifier, p_rowModifier });
+        if (!m_space->willCollideWithBorder(newPosition)) m_space->modifySpace(newPosition);
+
+        disableRawMode();
+    }
+
+    // TODO: Confirm user selection.
     std::string handleEntries(std::vector<std::string> p_acceptableInput) {
-        std::cout << "Choices: " << std::endl;
+        uiController.println("Choices: ");
         for (std::string i : p_acceptableInput) {
-            std::cout << i << " ";
+            uiController.print(i);
+            uiController.print(" ");
         }
-        std::cout << std::endl;
+        uiController.println("");
+        std::string rawInput;
         std::string acceptedInput;
 
         for (;;) {
-            std::string input;
-            std::cin >> input;
+            
+            std::cin >> rawInput;
 
             std::vector<std::string> inputVector;
             
             for (std::string i : p_acceptableInput) {
                 if (std::find(p_acceptableInput.begin(), p_acceptableInput.end(), i) != p_acceptableInput.end()) {
-                    if (i.rfind(input, 0) == 0) inputVector.push_back(i);
+                    if (i.rfind(rawInput, 0) == 0) inputVector.push_back(i);
                 }
             }
 
             if (inputVector.size() == 0) {
-                std::cout << "Invalid input." << std::endl;
+                uiController.println("Invalid input.");
             } else if (inputVector.size() == 1) {
                 acceptedInput = inputVector[0];
                 break;
             } else {
-                std::cout << "Which of the following did you mean?: " << std::endl;
+                uiController.println("Which of the following did you mean?: ");
                 for (std::string i : inputVector) {
-                    std::cout << i << std::endl;
+                    uiController.println(i);
                 }
             }
         }
-
-        std::cout << "You picked: " << acceptedInput << std::endl;
+        
+        // TODO: Handle verification of acceptedInput;
         return acceptedInput;
     }
 
     void userInput() {
-        std::vector<std::string> acceptableInput = { "fireball", "firestorm", "iceball", "lightning", "telekinis", "teleport" };
+        std::vector<std::string> acceptableInput = {
+            options.m_interact
+        };
         std::string input = handleEntries(acceptableInput);
+
+        if (input == options.m_interact) {
+            m_space->handleInteraction();
+        }
     }
 
     private:
         char m_userEntry;
-        
+        Map* m_space;
 };
 
 #endif

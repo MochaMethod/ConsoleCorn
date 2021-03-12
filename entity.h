@@ -7,12 +7,15 @@ class Entity {
     public:
         // Constructors:
         Entity() {}
-        Entity(std::string p_name, char p_sprite) {
+        Entity(std::string p_name, char p_sprite, bool p_isInteractive) {
             m_name = p_name;
             m_sprite = p_sprite;
+            m_isInteractive = p_isInteractive;
         }
-        
 
+        // Members:
+        bool m_isInteractive;
+        
         // Getters:
         char getSprite() { return m_sprite; }
         std::string getName() { return m_name; }
